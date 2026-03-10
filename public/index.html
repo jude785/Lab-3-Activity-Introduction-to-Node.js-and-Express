@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Static file</title>
+</head>
+<body>
+    <h1>Hello, this is a static file!</h1>
+    <form id="item_form">
+        <input type="text" id="item_input" placeholder="Add an item" required>
+        <button type="submit">Submit</button>
+    </form>
+    <ul id="item_list"></ul>
+    <script>
+        const form = document.getElementById('item_form');
+        const input = document.getElementById('item_input');
+        const list = document.getElementById('item_list');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const item = input.value;
+            if(item){
+                await fetch('/items', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ item })
+                })
+                input.value = '';
+                loaditems();
+            }
+        });
+
+            async function loaditems(){
+                const response = await fetch('/items');
+                const items = await response.json();
+                list.innerHTML = items.map(item => `<li>${item}</li>`).join('');
+                }
+        
+             loaditems();
+        
+    </script>
+</body>
+</html>
